@@ -1,0 +1,255 @@
+<mujoco model="supermarket">
+  <default>
+    <geom condim="1" friction="1 0.1 0.1"/>
+    <joint damping="0.1" stiffness="0"/>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2=".8 .9 1" width="256" height="256"/>
+  </asset>
+
+  <worldbody>
+    <!-- 相机设置 - 鸟瞰图 -->
+    <camera name="store_cam" pos="0 0 15" fovy="90" zaxis="0 0 -1"/>
+    <!-- 内部相机 -->
+    <camera name="inside_cam" pos="0 -5 1.5" fovy="70"/>
+
+    <!-- 光源 -->
+    <!-- 天花板主灯 -->
+    <light pos="0 -10 5" dir="0 0 -1" diffuse="1 1 1" ambient="0.8 0.8 0.8" castshadow="false"/>
+    <light pos="0 -5 5" dir="0 0 -1" diffuse="1 1 1" ambient="0.8 0.8 0.8" castshadow="false"/>
+    <light pos="0 0 5" dir="0 0 -1" diffuse="1 1 1" ambient="0.8 0.8 0.8" castshadow="false"/>
+    <light pos="0 5 5" dir="0 0 -1" diffuse="1 1 1" ambient="0.8 0.8 0.8" castshadow="false"/>
+    <light pos="0 10 5" dir="0 0 -1" diffuse="1 1 1" ambient="0.8 0.8 0.8" castshadow="false"/>
+
+    <!-- 地板 - 瓷砖样式 -->
+    <geom type="plane" size="15 20 0.1" rgba=".9 .9 .9 1" mass="0"/>
+    <!-- 瓷砖线条 -->
+    <geom type="box" size="0.02 20 0.01" pos="-3 0 0.01" rgba=".8 .8 .8 1" mass="0"/>
+    <geom type="box" size="0.02 20 0.01" pos="3 0 0.01" rgba=".8 .8 .8 1" mass="0"/>
+    <geom type="box" size="15 0.02 0.01" pos="0 -8 0.01" rgba=".8 .8 .8 1" mass="0"/>
+    <geom type="box" size="15 0.02 0.01" pos="0 -4 0.01" rgba=".8 .8 .8 1" mass="0"/>
+    <geom type="box" size="15 0.02 0.01" pos="0 0 0.01" rgba=".8 .8 .8 1" mass="0"/>
+    <geom type="box" size="15 0.02 0.01" pos="0 4 0.01" rgba=".8 .8 .8 1" mass="0"/>
+    <geom type="box" size="15 0.02 0.01" pos="0 8 0.01" rgba=".8 .8 .8 1" mass="0"/>
+
+    <!-- 天花板 -->
+    <geom type="box" size="15 20 0.1" pos="0 0 5" rgba=".95 .95 .95 1" mass="0"/>
+
+    <!-- 墙壁 -->
+    <!-- 后墙 -->
+    <geom type="box" size="15 0.1 2.5" pos="0 -10 2.5" rgba=".9 .9 .9 1" mass="0"/>
+    <!-- 前墙 -->
+    <geom type="box" size="15 0.1 2.5" pos="0 10 2.5" rgba=".9 .9 .9 1" mass="0"/>
+    <!-- 左墙 -->
+    <geom type="box" size="0.1 20 2.5" pos="-7.5 0 2.5" rgba=".9 .9 .9 1" mass="0"/>
+    <!-- 右墙 -->
+    <geom type="box" size="0.1 20 2.5" pos="7.5 0 2.5" rgba=".9 .9 .9 1" mass="0"/>
+
+    <!-- 左侧货架通道 -->
+    <!-- 左侧货架组1 -->
+    <body pos="-5 -10 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 - 底层 -->
+      <geom type="box" size="0.2 0.2 0.3" pos="0.5 0 0.5" rgba="1 0.2 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="0 0 0.5" rgba="0.2 0.8 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="-0.5 0 0.5" rgba="0.2 0.2 1 1" mass="0.5"/>
+      <!-- 商品 - 中层 -->
+      <geom type="box" size="0.2 0.2 0.3" pos="0.5 0 1.5" rgba="1 1 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="0 0 1.5" rgba="1 0.2 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="-0.5 0 1.5" rgba="0.2 1 1 1" mass="0.5"/>
+      <!-- 商品 - 上层 -->
+      <geom type="box" size="0.2 0.2 0.3" pos="0.5 0 2.5" rgba="0.8 0.4 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="0 0 2.5" rgba="0.4 0.2 0.8 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="-0.5 0 2.5" rgba="0.4 0.8 0.2 1" mass="0.5"/>
+    </body>
+
+    <!-- 左侧货架组2 -->
+    <body pos="-5 -5 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="cylinder" size="0.15 0.2" pos="0.5 0 1" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="0 0 1" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="-0.5 0 1" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="0.5 0 2" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="0 0 2" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="-0.5 0 2" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+    </body>
+
+    <!-- 左侧货架组3 -->
+    <body pos="-5 0 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="box" size="0.2 0.2 0.1" pos="0.5 0 1.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="0 0 1.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="-0.5 0 1.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="0.5 0 2.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="0 0 2.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="-0.5 0 2.5" rgba="1 1 1 1" mass="0.5"/>
+    </body>
+
+    <!-- 左侧货架组4 -->
+    <body pos="-5 5 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="box" size="0.25 0.25 0.25" pos="0.5 0 1" rgba="0.8 0.1 0.8 1" mass="0.5"/>
+      <geom type="box" size="0.25 0.25 0.25" pos="0 0 1" rgba="0.8 0.8 0.1 1" mass="0.5"/>
+      <geom type="box" size="0.25 0.25 0.25" pos="-0.5 0 1" rgba="0.1 0.8 0.8 1" mass="0.5"/>
+    </body>
+
+    <!-- 右侧货架通道 -->
+    <!-- 右侧货架组1 -->
+    <body pos="5 -10 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="box" size="0.2 0.2 0.3" pos="0.5 0 0.5" rgba="1 0.2 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="0 0 0.5" rgba="0.2 0.8 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="-0.5 0 0.5" rgba="0.2 0.2 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="0.5 0 1.5" rgba="1 1 0.2 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="0 0 1.5" rgba="1 0.2 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.3" pos="-0.5 0 1.5" rgba="0.2 1 1 1" mass="0.5"/>
+    </body>
+
+    <!-- 右侧货架组2 -->
+    <body pos="5 -5 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="cylinder" size="0.15 0.2" pos="0.5 0 1" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="0 0 1" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="-0.5 0 1" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="0.5 0 2" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="0 0 2" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+      <geom type="cylinder" size="0.15 0.2" pos="-0.5 0 2" rgba="0.9 0.6 0.3 1" mass="0.5"/>
+    </body>
+
+    <!-- 右侧货架组3 -->
+    <body pos="5 0 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="box" size="0.2 0.2 0.1" pos="0.5 0 1.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="0 0 1.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="-0.5 0 1.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="0.5 0 2.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="0 0 2.5" rgba="1 1 1 1" mass="0.5"/>
+      <geom type="box" size="0.2 0.2 0.1" pos="-0.5 0 2.5" rgba="1 1 1 1" mass="0.5"/>
+    </body>
+
+    <!-- 右侧货架组4 -->
+    <body pos="5 5 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="0.1 0.5 2" rgba=".7 .5 .3 1" mass="10"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 1" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 2" rgba=".7 .5 .3 1" mass="5"/>
+      <geom type="box" size="1 0.5 0.1" pos="0 0 3" rgba=".7 .5 .3 1" mass="5"/>
+      <!-- 商品 -->
+      <geom type="box" size="0.25 0.25 0.25" pos="0.5 0 1" rgba="0.8 0.1 0.8 1" mass="0.5"/>
+      <geom type="box" size="0.25 0.25 0.25" pos="0 0 1" rgba="0.8 0.8 0.1 1" mass="0.5"/>
+      <geom type="box" size="0.25 0.25 0.25" pos="-0.5 0 1" rgba="0.1 0.8 0.8 1" mass="0.5"/>
+    </body>
+
+    <!-- 中间促销货架 -->
+    <body pos="0 -8 0">
+      <!-- 货架主体 -->
+      <geom type="box" size="2 0.5 0.1" pos="0 0 0.5" rgba=".8 .6 .4 1" mass="10"/>
+      <!-- 促销商品 -->
+      <geom type="box" size="0.3 0.3 0.3" pos="1 0 1" rgba="0.9 0.1 0.1 1" mass="1"/>
+      <geom type="box" size="0.3 0.3 0.3" pos="0 0 1" rgba="0.1 0.9 0.1 1" mass="1"/>
+      <geom type="box" size="0.3 0.3 0.3" pos="-1 0 1" rgba="0.1 0.1 0.9 1" mass="1"/>
+    </body>
+
+    <!-- 宇树机器人 -->
+    <body pos="0 0 1.5">
+      <joint name="root" type="free" damping="0.1"/>
+      
+      <!-- 头部 -->
+      <geom type="box" size="0.2 0.2 0.2" pos="0 0 0.4" rgba="0.1 0.1 0.1 1" mass="3"/>
+      
+      <!-- 躯干 -->
+      <geom type="box" size="0.3 0.15 0.5" pos="0 0 -0.3" rgba="0.1 0.1 0.1 1" mass="15"/>
+      
+      <!-- 简单手臂 -->
+      <geom type="box" size="0.1 0.3 0.1" pos="0.3 0 -0.1" rgba="0.1 0.1 0.1 1" mass="2"/>
+      <geom type="box" size="0.1 0.3 0.1" pos="-0.3 0 -0.1" rgba="0.1 0.1 0.1 1" mass="2"/>
+      
+      <!-- 简单腿部 -->
+      <geom type="box" size="0.1 0.3 0.1" pos="0.15 0 -0.8" rgba="0.1 0.1 0.1 1" mass="5"/>
+      <geom type="box" size="0.1 0.3 0.1" pos="-0.15 0 -0.8" rgba="0.1 0.1 0.1 1" mass="5"/>
+      <geom type="box" size="0.15 0.08 0.2" pos="0.15 0 -1.1" rgba="0.1 0.1 0.1 1" mass="2"/>
+      <geom type="box" size="0.15 0.08 0.2" pos="-0.15 0 -1.1" rgba="0.1 0.1 0.1 1" mass="2"/>
+      
+      <!-- 绿色装饰条 -->
+      <geom type="cylinder" size="0.05 0.2" pos="0.35 0 -0.4" rgba="0.2 0.8 0.2 1" mass="0.5"/>
+      <geom type="cylinder" size="0.05 0.2" pos="-0.35 0 -0.4" rgba="0.2 0.8 0.2 1" mass="0.5"/>
+    </body>
+
+    <!-- 购物车 -->
+    <body pos="0 8 0.5">
+      <joint type="free"/>
+      <!-- 购物车主体 -->
+      <geom type="box" size="0.5 0.3 0.3" pos="0 0 0.3" rgba=".2 .5 .8 1" mass="10"/>
+      <!-- 车轮 -->
+      <geom type="cylinder" size="0.1 0.1" pos="0.6 0.2 0.1" rgba=".1 .1 .1 1" mass="1"/>
+      <geom type="cylinder" size="0.1 0.1" pos="-0.6 0.2 0.1" rgba=".1 .1 .1 1" mass="1"/>
+      <geom type="cylinder" size="0.1 0.1" pos="0.6 -0.2 0.1" rgba=".1 .1 .1 1" mass="1"/>
+      <geom type="cylinder" size="0.1 0.1" pos="-0.6 -0.2 0.1" rgba=".1 .1 .1 1" mass="1"/>
+      <!-- 购物车把手 -->
+      <geom type="cylinder" size="0.05 0.4" pos="0 -0.5 0.5" rgba=".2 .5 .8 1" mass="2"/>
+    </body>
+
+    <!-- 顾客 -->
+    <body pos="0 5 1.2">
+      <joint type="free"/>
+      <!-- 头部 -->
+      <geom type="sphere" size="0.2" pos="0 0 0.2" rgba="0.8 0.5 0.2 1" mass="4"/>
+      <!-- 身体 -->
+      <geom type="box" size="0.25 0.15 0.4" pos="0 0 -0.3" rgba="0.2 0.4 0.8 1" mass="10"/>
+      <!-- 腿部 -->
+      <geom type="cylinder" size="0.08 0.4" pos="0.1 0 -0.8" rgba="0.1 0.1 0.1 1" mass="5"/>
+      <geom type="cylinder" size="0.08 0.4" pos="-0.1 0 -0.8" rgba="0.1 0.1 0.1 1" mass="5"/>
+      <!-- 手臂 -->
+      <geom type="cylinder" size="0.06 0.3" pos="0.25 0 -0.2" rgba="0.8 0.5 0.2 1" mass="3"/>
+      <geom type="cylinder" size="0.06 0.3" pos="-0.25 0 -0.2" rgba="0.8 0.5 0.2 1" mass="3"/>
+    </body>
+  </worldbody>
+
+  <!-- 执行器设置 -->
+  <actuator>
+    <!-- 身体移动执行器 -->
+    <velocity joint="root" name="forward" gear="0 0 0 0 50 0"/>
+    <velocity joint="root" name="backward" gear="0 0 0 0 -50 0"/>
+    <velocity joint="root" name="left" gear="0 0 0 50 0 0"/>
+    <velocity joint="root" name="right" gear="0 0 0 -50 0 0"/>
+  </actuator>
+
+  <!-- 物理参数设置 -->
+  <option gravity="0 0 -9.81" timestep="0.005"/>
+  <statistic extent="15" center="0 0 2"/>
+</mujoco>
