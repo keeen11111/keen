@@ -1,0 +1,389 @@
+<mujoco model="gas_station">
+  <compiler angle="degree" autolimits="true" coordinate="local" inertiafromgeom="true" meshdir="meshes" texturedir="textures"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4" cone="elliptic" impratio="10"/>
+  <size njmax="10000" nconmax="4000"/>
+
+  <visual>
+    <global offwidth="1920" offheight="1080"/>
+    <quality shadowsize="4096"/>
+    <map znear="0.02" zfar="80" fogstart="40" fogend="80" shadowclip="8"/>
+  </visual>
+
+  <default>
+    <default class="station">
+      <geom contype="1" conaffinity="1" density="900" friction="1.0 0.005 0.001" solref="0.02 1" solimp="0.95 0.99 0.001" margin="0.002" rgba="0.9 0.9 0.9 1"/>
+    </default>
+
+    <default class="car">
+      <joint damping="2" armature="0.02"/>
+      <geom contype="1" conaffinity="1" density="600" friction="1.2 0.01 0.001" solref="0.02 1" solimp="0.95 0.99 0.001" margin="0.001" rgba="0.8 0.12 0.12 1"/>
+    </default>
+
+    <default class="wheel">
+      <geom type="cylinder" size="0.18 0.08" density="1200" friction="1.8 0.02 0.002" rgba="0.06 0.06 0.06 1"/>
+    </default>
+
+    <default class="robot">
+      <joint damping="4" armature="0.03"/>
+      <geom contype="1" conaffinity="1" density="800" friction="1.2 0.01 0.001" solref="0.02 1" solimp="0.95 0.99 0.001" margin="0.001" rgba="0.82 0.82 0.86 1"/>
+    </default>
+  </default>
+
+  <asset>
+    <texture name="skybox" type="skybox" file="skybox.png"/>
+    <texture name="tex_ground" type="2d" file="ground_albedo.png"/>
+    <texture name="tex_paint" type="2d" file="paint_albedo.png"/>
+    <texture name="tex_metal" type="2d" file="metal_albedo.png"/>
+    <texture name="tex_logo" type="2d" file="logo.png"/>
+    <texture name="tex_poster" type="2d" file="poster.png"/>
+    <texture name="tex_roof_fascia" type="2d" file="roof_fascia.png"/>
+    <texture name="tex_cnpc_logo" type="2d" file="cnpc_logo.png"/>
+    <texture name="tex_store" type="2d" file="convenience_store.png"/>
+
+    <material name="mat_ground" texture="tex_ground" texrepeat="8 8" metallic="0.0" roughness="0.9" rgba="1 1 1 1"/>
+    <material name="mat_paint" texture="tex_paint" texrepeat="1 1" metallic="0.1" roughness="0.35" rgba="1 1 1 1"/>
+    <material name="mat_metal" texture="tex_metal" texrepeat="2 2" metallic="1.0" roughness="0.25" rgba="1 1 1 1"/>
+    <material name="mat_glass" metallic="0.0" roughness="0.05" rgba="0.55 0.7 0.9 0.25"/>
+    <material name="mat_rubber" metallic="0.0" roughness="0.95" rgba="0.06 0.06 0.06 1"/>
+    <material name="mat_logo" texture="tex_logo" texuniform="true" metallic="0.0" roughness="0.65" rgba="1 1 1 1"/>
+    <material name="mat_poster" texture="tex_poster" texuniform="true" metallic="0.0" roughness="0.9" rgba="1 1 1 1"/>
+    <material name="mat_roof_fascia" texture="tex_roof_fascia" texrepeat="4 1" metallic="0.1" roughness="0.8" rgba="1 1 1 1"/>
+    <material name="mat_cnpc_logo" texture="tex_cnpc_logo" texuniform="true" metallic="0.0" roughness="0.5" rgba="1 1 1 1"/>
+    <material name="mat_store_sign" texture="tex_store" texuniform="true" metallic="0.0" roughness="0.5" rgba="1 1 1 1"/>
+
+    <mesh name="mesh_pump" file="pump.obj"/>
+    <mesh name="mesh_nozzle" file="nozzle.obj"/>
+    <mesh name="mesh_sign" file="sign.obj"/>
+  </asset>
+
+  <worldbody>
+    <geom name="ground" type="plane" size="60 60 0.1" material="mat_ground" rgba="1 1 1 1" contype="1" conaffinity="1"/>
+    <geom name="lane_center" type="box" pos="0 -2 0.001" size="25 0.05 0.001" rgba="0.95 0.9 0.2 1" contype="0" conaffinity="0"/>
+    <geom name="lane_edge_1" type="box" pos="0 -6 0.001" size="25 0.03 0.001" rgba="0.95 0.95 0.95 1" contype="0" conaffinity="0"/>
+    <geom name="lane_edge_2" type="box" pos="0 2 0.001" size="25 0.03 0.001" rgba="0.95 0.95 0.95 1" contype="0" conaffinity="0"/>
+
+    <light name="sun" pos="0 0 12" dir="0.2 0.2 -1" directional="true" diffuse="1 1 1" specular="0.25 0.25 0.25" castshadow="true"/>
+    <light name="fill" pos="8 -8 6" dir="-1 1 -0.8" directional="true" diffuse="0.3 0.3 0.35" specular="0.05 0.05 0.05" castshadow="false"/>
+
+    <camera name="overview" pos="14 -18 10" xyaxes="0.8 0.6 0  -0.2 0.3 0.93"/>
+    <camera name="driver" pos="-6 -2 1.8" xyaxes="1 0 0  0 1 0"/>
+
+    <body name="station" pos="0 0 0">
+      <!-- Building/Convenience Store -->
+      <geom class="station" name="station_building" type="box" pos="0 8 1.5" size="8.0 2.0 1.5" material="mat_metal" rgba="0.9 0.9 0.9 1"/>
+      <!-- Store Sign -->
+      <geom class="station" name="store_sign" type="box" pos="2 6.05 2.2" size="2.0 0.05 0.4" material="mat_store_sign" contype="0" conaffinity="0"/>
+      
+      <!-- Roof Structure -->
+      <!-- Main red fascia (sides) -->
+      <geom class="station" name="station_roof_fascia_f" type="box" pos="0 0 4.0" size="8.0 0.1 0.6" material="mat_roof_fascia"/>
+      <geom class="station" name="station_roof_fascia_b" type="box" pos="0 6 4.0" size="8.0 0.1 0.6" material="mat_roof_fascia"/>
+      <geom class="station" name="station_roof_fascia_l" type="box" pos="-8 3 4.0" size="0.1 3.1 0.6" material="mat_roof_fascia"/>
+      <geom class="station" name="station_roof_fascia_r" type="box" pos="8 3 4.0" size="0.1 3.1 0.6" material="mat_roof_fascia"/>
+      
+      <!-- Roof top (white/grey) -->
+      <geom class="station" name="station_roof_top" type="box" pos="0 3 4.5" size="8.0 3.0 0.05" rgba="0.9 0.9 0.9 1"/>
+      
+      <!-- CNPC Logo on front fascia -->
+      <geom class="station" name="roof_logo" type="box" pos="0 -0.11 4.0" size="0.5 0.005 0.5" material="mat_cnpc_logo" contype="0" conaffinity="0"/>
+
+      <!-- Pillars (Box type now) -->
+      <geom class="station" name="station_pillar_1" type="box" pos="-5 0 2.0" size="0.4 0.4 2.0" material="mat_metal" rgba="0.95 0.95 0.95 1"/>
+      <geom class="station" name="station_pillar_2" type="box" pos="5 0 2.0" size="0.4 0.4 2.0" material="mat_metal" rgba="0.95 0.95 0.95 1"/>
+      <geom class="station" name="station_pillar_3" type="box" pos="-5 6 2.0" size="0.4 0.4 2.0" material="mat_metal" rgba="0.95 0.95 0.95 1"/>
+      <geom class="station" name="station_pillar_4" type="box" pos="5 6 2.0" size="0.4 0.4 2.0" material="mat_metal" rgba="0.95 0.95 0.95 1"/>
+
+      <!-- Truss Structure (Simplified) -->
+      <!-- Longitudinal beams -->
+      <geom class="station" type="cylinder" pos="0 1 3.6" size="0.05 8.0" xyaxes="1 0 0 0 0 1" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="cylinder" pos="0 3 3.6" size="0.05 8.0" xyaxes="1 0 0 0 0 1" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="cylinder" pos="0 5 3.6" size="0.05 8.0" xyaxes="1 0 0 0 0 1" rgba="0.8 0.8 0.8 1"/>
+      <!-- Cross beams -->
+      <geom class="station" type="cylinder" pos="-4 3 3.6" size="0.05 3.0" xyaxes="0 1 0 0 0 1" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="cylinder" pos="0 3 3.6" size="0.05 3.0" xyaxes="0 1 0 0 0 1" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="cylinder" pos="4 3 3.6" size="0.05 3.0" xyaxes="0 1 0 0 0 1" rgba="0.8 0.8 0.8 1"/>
+      <!-- Diagonal beams (Just a few for look) -->
+      <geom class="station" type="capsule" fromto="-8 0 3.6  -4 1 3.6" size="0.03" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="capsule" fromto="-4 1 3.6  0 0 3.6" size="0.03" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="capsule" fromto="0 0 3.6  4 1 3.6" size="0.03" rgba="0.8 0.8 0.8 1"/>
+      <geom class="station" type="capsule" fromto="4 1 3.6  8 0 3.6" size="0.03" rgba="0.8 0.8 0.8 1"/>
+
+      <body name="underground_tank" pos="-9 10 -1.2">
+        <geom class="station" name="tank" type="cylinder" size="1.1 4.5" rgba="0.25 0.25 0.28 1" material="mat_metal"/>
+      </body>
+
+      <body name="pump" pos="-2.5 0 0">
+        <geom class="station" type="mesh" mesh="mesh_pump" material="mat_metal" rgba="1 1 1 1"/>
+        <site name="site_pump_handle" pos="0.23 0 0.95" size="0.01" rgba="1 0 0 1"/>
+      </body>
+      <body name="pump2" pos="2.5 0 0">
+        <geom class="station" type="mesh" mesh="mesh_pump" material="mat_metal" rgba="1 1 1 1"/>
+        <site name="site_pump2_handle" pos="0.23 0 0.95" size="0.01" rgba="0 0 1 1"/>
+      </body>
+      
+      <!-- Pump Islands -->
+      <geom class="station" name="pump_island_l" type="box" pos="-2.5 0 0.08" size="1.25 0.95 0.08" rgba="0.16 0.16 0.18 1" material="mat_metal"/>
+      <geom class="station" name="pump_island_l_curb" type="box" pos="-2.5 0 0.08" size="1.3 1.0 0.07" rgba="0.9 0.8 0.1 1"/> <!-- Yellow curb -->
+      
+      <geom class="station" name="pump_island_r" type="box" pos="2.5 0 0.08" size="1.25 0.95 0.08" rgba="0.16 0.16 0.18 1" material="mat_metal"/>
+      <geom class="station" name="pump_island_r_curb" type="box" pos="2.5 0 0.08" size="1.3 1.0 0.07" rgba="0.9 0.8 0.1 1"/> <!-- Yellow curb -->
+
+      <body name="billboard" pos="-9 4 0">
+        <geom class="station" type="cylinder" pos="0 0 1.6" size="0.08 1.6" material="mat_metal"/>
+        <geom class="station" type="box" pos="0 0.08 3.0" size="1.7 0.02 1.0" material="mat_poster" contype="0" conaffinity="0"/>
+        <geom class="station" type="box" pos="0 0.06 3.0" size="1.72 0.01 1.02" rgba="0.12 0.12 0.14 1" material="mat_metal" contype="0" conaffinity="0"/>
+      </body>
+
+      <body name="lamp_post" pos="10 6 0">
+        <geom class="station" type="cylinder" size="0.08 3.4" material="mat_metal"/>
+        <geom class="station" type="sphere" pos="0 0 3.5" size="0.18" rgba="1 1 0.9 1"/>
+        <light name="lamp_light" pos="0 0 3.6" diffuse="0.9 0.9 1" specular="0.1 0.1 0.1" cutoff="45"/>
+      </body>
+
+      <body name="sign" pos="12 -6 0">
+        <geom class="station" type="mesh" mesh="mesh_sign" material="mat_metal"/>
+        <geom class="station" type="box" pos="0 0 1.2" size="0.55 0.05 0.45" rgba="0.15 0.15 0.17 1" material="mat_metal"/>
+        <geom class="station" type="box" pos="0.0 0.052 1.2" size="0.52 0.002 0.42" material="mat_logo" rgba="1 1 1 1" contype="0" conaffinity="0"/>
+      </body>
+    </body>
+
+    <body name="car2" pos="-8 -2 0">
+      <joint name="car2_x" type="slide" axis="1 0 0" range="-40 40"/>
+      <joint name="car2_y" type="slide" axis="0 1 0" range="-40 40"/>
+      <joint name="car2_yaw" type="hinge" axis="0 0 1" range="-180 180"/>
+
+      <geom class="car" name="car2_chassis" type="box" pos="0 0 0.42" size="1.9 0.85 0.32" material="mat_paint" rgba="0.2 0.2 0.22 1"/>
+      <geom class="car" name="car2_cabin" type="box" pos="-0.35 0 0.82" size="1.05 0.78 0.32" material="mat_paint" rgba="0.2 0.2 0.22 1"/>
+
+      <body name="steering_wheel2" pos="-0.6 0 0.86">
+        <joint name="steer_wheel2" type="hinge" axis="1 0 0" range="-540 540" damping="0.5"/>
+        <geom class="car" type="cylinder" size="0.16 0.02" rgba="0.06 0.06 0.06 1"/>
+      </body>
+
+      <body name="door2_left" pos="-0.2 0.86 0.6">
+        <joint name="door2_l" type="hinge" axis="0 0 1" range="0 75" damping="2"/>
+        <geom class="car" type="box" pos="0 0 0" size="0.85 0.05 0.32" rgba="0.75 0.1 0.1 1"/>
+      </body>
+
+      <body name="door2_right" pos="-0.2 -0.86 0.6">
+        <joint name="door2_r" type="hinge" axis="0 0 1" range="-75 0" damping="2"/>
+        <geom class="car" type="box" pos="0 0 0" size="0.85 0.05 0.32" rgba="0.75 0.1 0.1 1"/>
+      </body>
+
+      <body name="window2_left" pos="-0.35 0.86 0.92">
+        <joint name="window2_l" type="slide" axis="0 0 1" range="0 0.28" damping="3"/>
+        <geom class="car" type="box" pos="0 0 0.12" size="0.75 0.02 0.2" material="mat_glass"/>
+      </body>
+
+      <body name="window2_right" pos="-0.35 -0.86 0.92">
+        <joint name="window2_r" type="slide" axis="0 0 1" range="0 0.28" damping="3"/>
+        <geom class="car" type="box" pos="0 0 0.12" size="0.75 0.02 0.2" material="mat_glass"/>
+      </body>
+
+      <body name="fl2_steer" pos="1.35 0.78 0.22">
+        <inertial pos="0 0 0" mass="1" diaginertia="0.01 0.01 0.01"/>
+        <joint name="fl2_steer" type="hinge" axis="0 0 1" range="-32 32" damping="0.2"/>
+        <body name="fl2_wheel" pos="0 0 0">
+          <joint name="fl2_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+          <geom class="wheel" material="mat_rubber"/>
+        </body>
+      </body>
+
+      <body name="fr2_steer" pos="1.35 -0.78 0.22">
+        <inertial pos="0 0 0" mass="1" diaginertia="0.01 0.01 0.01"/>
+        <joint name="fr2_steer" type="hinge" axis="0 0 1" range="-32 32" damping="0.2"/>
+        <body name="fr2_wheel" pos="0 0 0">
+          <joint name="fr2_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+          <geom class="wheel" material="mat_rubber"/>
+        </body>
+      </body>
+
+      <body name="rl2_wheel" pos="-1.35 0.78 0.22">
+        <joint name="rl2_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+        <geom class="wheel" material="mat_rubber"/>
+      </body>
+
+      <body name="rr2_wheel" pos="-1.35 -0.78 0.22">
+        <joint name="rr2_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+        <geom class="wheel" material="mat_rubber"/>
+      </body>
+    </body>
+    <body name="car" pos="3 -2 0">
+      <joint name="car_x" type="slide" axis="1 0 0" range="-40 40"/>
+      <joint name="car_y" type="slide" axis="0 1 0" range="-40 40"/>
+      <joint name="car_yaw" type="hinge" axis="0 0 1" range="-180 180"/>
+
+      <geom class="car" name="car_chassis" type="box" pos="0 0 0.42" size="1.9 0.85 0.32" material="mat_paint" rgba="1 1 1 1"/>
+      <geom class="car" name="car_cabin" type="box" pos="-0.35 0 0.82" size="1.05 0.78 0.32" material="mat_paint" rgba="1 1 1 1"/>
+
+      <body name="steering_wheel" pos="-0.6 0 0.86">
+        <joint name="steer_wheel" type="hinge" axis="1 0 0" range="-540 540" damping="0.5"/>
+        <geom class="car" type="cylinder" size="0.16 0.02" rgba="0.06 0.06 0.06 1"/>
+      </body>
+
+      <body name="door_left" pos="-0.2 0.86 0.6">
+        <joint name="door_l" type="hinge" axis="0 0 1" range="0 75" damping="2"/>
+        <geom class="car" type="box" pos="0 0 0" size="0.85 0.05 0.32" rgba="0.75 0.1 0.1 1"/>
+      </body>
+
+      <body name="door_right" pos="-0.2 -0.86 0.6">
+        <joint name="door_r" type="hinge" axis="0 0 1" range="-75 0" damping="2"/>
+        <geom class="car" type="box" pos="0 0 0" size="0.85 0.05 0.32" rgba="0.75 0.1 0.1 1"/>
+      </body>
+
+      <body name="window_left" pos="-0.35 0.86 0.92">
+        <joint name="window_l" type="slide" axis="0 0 1" range="0 0.28" damping="3"/>
+        <geom class="car" type="box" pos="0 0 0.12" size="0.75 0.02 0.2" material="mat_glass"/>
+      </body>
+
+      <body name="window_right" pos="-0.35 -0.86 0.92">
+        <joint name="window_r" type="slide" axis="0 0 1" range="0 0.28" damping="3"/>
+        <geom class="car" type="box" pos="0 0 0.12" size="0.75 0.02 0.2" material="mat_glass"/>
+      </body>
+
+      <body name="fl_steer" pos="1.35 0.78 0.22">
+        <inertial pos="0 0 0" mass="1" diaginertia="0.01 0.01 0.01"/>
+        <joint name="fl_steer" type="hinge" axis="0 0 1" range="-32 32" damping="0.2"/>
+        <body name="fl_wheel" pos="0 0 0">
+          <joint name="fl_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+          <geom class="wheel" material="mat_rubber"/>
+        </body>
+      </body>
+
+      <body name="fr_steer" pos="1.35 -0.78 0.22">
+        <inertial pos="0 0 0" mass="1" diaginertia="0.01 0.01 0.01"/>
+        <joint name="fr_steer" type="hinge" axis="0 0 1" range="-32 32" damping="0.2"/>
+        <body name="fr_wheel" pos="0 0 0">
+          <joint name="fr_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+          <geom class="wheel" material="mat_rubber"/>
+        </body>
+      </body>
+
+      <body name="rl_wheel" pos="-1.35 0.78 0.22">
+        <joint name="rl_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+        <geom class="wheel" material="mat_rubber"/>
+      </body>
+
+      <body name="rr_wheel" pos="-1.35 -0.78 0.22">
+        <joint name="rr_roll" type="hinge" axis="0 1 0" damping="0.05" frictionloss="0.01"/>
+        <geom class="wheel" material="mat_rubber"/>
+      </body>
+
+      <site name="site_car_front" pos="2.0 0 0.35" size="0.02" rgba="0 1 0 1"/>
+    </body>
+
+    <body name="robot" pos="-6 -4 0">
+      <joint name="robot_x" type="slide" axis="1 0 0" range="-40 40"/>
+      <joint name="robot_y" type="slide" axis="0 1 0" range="-40 40"/>
+      <joint name="robot_yaw" type="hinge" axis="0 0 1" range="-180 180"/>
+
+      <geom class="robot" name="robot_base" type="box" pos="0 0 0.25" size="0.32 0.26 0.25" material="mat_metal"/>
+      <geom class="robot" name="robot_wheel_l" type="cylinder" pos="0 0.28 0.12" size="0.10 0.05" rgba="0.08 0.08 0.08 1"/>
+      <geom class="robot" name="robot_wheel_r" type="cylinder" pos="0 -0.28 0.12" size="0.10 0.05" rgba="0.08 0.08 0.08 1"/>
+
+      <body name="torso" pos="0 0 0.62">
+        <geom class="robot" type="box" size="0.22 0.18 0.28" material="mat_metal"/>
+
+        <body name="head" pos="0 0 0.42">
+          <joint name="head_yaw" type="hinge" axis="0 0 1" range="-90 90" damping="1"/>
+          <joint name="head_pitch" type="hinge" axis="0 1 0" range="-30 25" damping="1"/>
+          <geom class="robot" type="sphere" size="0.13" rgba="0.92 0.92 0.95 1"/>
+          <site name="site_robot_vision" pos="0.14 0 0.02" size="0.01" rgba="0 0.6 1 1"/>
+        </body>
+
+        <body name="arm_base" pos="0.16 0 0.24">
+          <inertial pos="0 0 0" mass="0.8" diaginertia="0.008 0.008 0.008"/>
+          <joint name="arm_j1" type="hinge" axis="0 0 1" range="-150 150"/>
+          <body name="arm_link1" pos="0 0 0">
+            <joint name="arm_j2" type="hinge" axis="0 1 0" range="-90 90"/>
+            <geom class="robot" type="capsule" fromto="0 0 0  0.30 0 0" size="0.06" material="mat_metal"/>
+            <body name="arm_link2" pos="0.30 0 0">
+              <joint name="arm_j3" type="hinge" axis="0 1 0" range="-120 120"/>
+              <geom class="robot" type="capsule" fromto="0 0 0  0.28 0 0" size="0.055" material="mat_metal"/>
+              <body name="arm_link3" pos="0.28 0 0">
+                <joint name="arm_j4" type="hinge" axis="1 0 0" range="-180 180"/>
+                <geom class="robot" type="capsule" fromto="0 0 0  0.20 0 0" size="0.05" material="mat_metal"/>
+                <body name="wrist" pos="0.20 0 0">
+                  <joint name="arm_j5" type="hinge" axis="0 1 0" range="-120 120"/>
+                  <joint name="arm_j6" type="hinge" axis="0 0 1" range="-180 180"/>
+                  <geom class="robot" type="sphere" size="0.06" material="mat_metal"/>
+
+                  <body name="gripper" pos="0.12 0 0">
+                    <geom class="robot" type="box" size="0.06 0.06 0.06" rgba="0.2 0.2 0.22 1"/>
+                    <joint name="grip" type="slide" axis="0 1 0" range="-0.04 0.04" damping="5"/>
+                    <site name="site_gripper" pos="0.08 0 0" size="0.01" rgba="1 0 1 1"/>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+
+    <body name="nozzle" pos="-1.72 0.0 0.95">
+      <freejoint name="nozzle_free"/>
+      <geom class="station" type="mesh" mesh="mesh_nozzle" material="mat_metal" rgba="0.1 0.1 0.12 1"/>
+      <site name="site_nozzle_tip" pos="0 0 0.18" size="0.005" rgba="1 0.6 0 1"/>
+    </body>
+
+    <body name="fuel_stream" pos="-1.72 0.0 0.95">
+      <joint name="stream_len" type="slide" axis="0 0 -1" range="0 0.9" damping="2"/>
+      <geom name="fuel_geom" type="capsule" fromto="0 0 0  0 0 -0.5" size="0.012" rgba="1 0.9 0.1 0.0" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+
+  <equality>
+    <joint name="eq_steer_fl" joint1="steer_wheel" joint2="fl_steer" polycoef="0 0.06 0 0 0"/>
+    <joint name="eq_steer_fr" joint1="steer_wheel" joint2="fr_steer" polycoef="0 0.06 0 0 0"/>
+      <joint name="eq_steer_fl2" joint1="steer_wheel2" joint2="fl2_steer" polycoef="0 0.06 0 0 0"/>
+      <joint name="eq_steer_fr2" joint1="steer_wheel2" joint2="fr2_steer" polycoef="0 0.06 0 0 0"/>
+
+    <weld name="eq_nozzle_on_pump" site1="site_pump_handle" site2="site_nozzle_tip" active="true"/>
+    <weld name="eq_nozzle_on_gripper" site1="site_gripper" site2="site_nozzle_tip" active="false"/>
+  </equality>
+
+  <actuator>
+    <motor name="car_drive_fl" joint="fl_roll" gear="160" ctrlrange="-1 1"/>
+    <motor name="car_drive_fr" joint="fr_roll" gear="160" ctrlrange="-1 1"/>
+    <motor name="car_drive_rl" joint="rl_roll" gear="220" ctrlrange="-1 1"/>
+    <motor name="car_drive_rr" joint="rr_roll" gear="220" ctrlrange="-1 1"/>
+
+    <position name="car_steer" joint="steer_wheel" kp="40" ctrlrange="-540 540"/>
+
+    <position name="car_door_l" joint="door_l" kp="50" ctrlrange="0 75"/>
+    <position name="car_door_r" joint="door_r" kp="50" ctrlrange="-75 0"/>
+    <position name="car_window_l" joint="window_l" kp="80" ctrlrange="0 0.28"/>
+    <position name="car_window_r" joint="window_r" kp="80" ctrlrange="0 0.28"/>
+
+      <motor name="car2_drive_fl" joint="fl2_roll" gear="160" ctrlrange="-1 1"/>
+      <motor name="car2_drive_fr" joint="fr2_roll" gear="160" ctrlrange="-1 1"/>
+      <motor name="car2_drive_rl" joint="rl2_roll" gear="220" ctrlrange="-1 1"/>
+      <motor name="car2_drive_rr" joint="rr2_roll" gear="220" ctrlrange="-1 1"/>
+
+      <position name="car2_steer" joint="steer_wheel2" kp="40" ctrlrange="-540 540"/>
+
+      <position name="car2_door_l" joint="door2_l" kp="50" ctrlrange="0 75"/>
+      <position name="car2_door_r" joint="door2_r" kp="50" ctrlrange="-75 0"/>
+      <position name="car2_window_l" joint="window2_l" kp="80" ctrlrange="0 0.28"/>
+      <position name="car2_window_r" joint="window2_r" kp="80" ctrlrange="0 0.28"/>
+    <velocity name="robot_vx" joint="robot_x" kv="30" ctrlrange="-2 2"/>
+    <velocity name="robot_vy" joint="robot_y" kv="30" ctrlrange="-2 2"/>
+    <velocity name="robot_wz" joint="robot_yaw" kv="15" ctrlrange="-2 2"/>
+
+    <position name="robot_head_yaw" joint="head_yaw" kp="25" ctrlrange="-90 90"/>
+    <position name="robot_head_pitch" joint="head_pitch" kp="25" ctrlrange="-30 25"/>
+
+    <position name="robot_arm_j1" joint="arm_j1" kp="60" ctrlrange="-150 150"/>
+    <position name="robot_arm_j2" joint="arm_j2" kp="60" ctrlrange="-90 90"/>
+    <position name="robot_arm_j3" joint="arm_j3" kp="60" ctrlrange="-120 120"/>
+    <position name="robot_arm_j4" joint="arm_j4" kp="40" ctrlrange="-180 180"/>
+    <position name="robot_arm_j5" joint="arm_j5" kp="40" ctrlrange="-120 120"/>
+    <position name="robot_arm_j6" joint="arm_j6" kp="30" ctrlrange="-180 180"/>
+
+    <position name="robot_grip" joint="grip" kp="200" ctrlrange="-0.04 0.04"/>
+
+    <position name="fuel_stream_len" joint="stream_len" kp="50" ctrlrange="0 0.9"/>
+  </actuator>
+</mujoco>
+
